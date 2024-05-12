@@ -4,20 +4,20 @@
   Aquí tienes una descripción de cada uno de ellos y sus diferencias:
 
   call():
-
   Utilizado para llamar a una función con un valor específico de this y una lista de argumentos proporcionados individualmente.
   Sintaxis: funcion.call(thisArg, arg1, arg2, ...).
   Útil cuando conoces los argumentos de antemano y los puedes pasar individualmente.
-  apply():
 
+  apply():  
   Similar a call(), pero acepta un array o un objeto de tipo array-like como argumento de la lista de argumentos.
   Sintaxis: funcion.apply(thisArg, [argsArray]).
   Útil cuando los argumentos se encuentran en un array o array-like y necesitas pasarlos todos a la función.
+  
   bind():
-
   Utilizado para crear una nueva función que, cuando es llamada, tiene un valor de this predefinido, y opcionalmente, argumentos predefinidos.
   Sintaxis: nuevaFuncion = funcion.bind(thisArg[, arg1[, arg2[, ...]]]).
   Útil cuando quieres crear una versión de una función con un contexto de this fijo y, posiblemente, algunos argumentos predefinidos.
+  
   A diferencia de call() y apply(), bind() no invoca la función de inmediato, sino que devuelve una nueva función con el contexto y los argumentos predefinidos.
   Aquí hay un ejemplo para ilustrar las diferencias:
   Además del método call(), que se utiliza para invocar una función con un valor específico de this y argumentos proporcionados individualmente, JavaScript también proporciona otros métodos relacionados que se utilizan de manera similar. Estos métodos son apply() y bind().
