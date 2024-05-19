@@ -1,3 +1,4 @@
+/*
 -- generales
 created on 1993
 Brenden Eich
@@ -21,11 +22,13 @@ boolean
 undefined
 symbol
 null
+*/
 
 let name; //variable can or not be unassigned.
 let age = 5;
 let contry = null; //we can also assign a null value to the variable and later reasign the variable.
 
+/*
 Any value that is not a primitive will inherit from the objet class.  
 
 -- lexical environment determines where variables work and where they don't based on the scope.
@@ -45,22 +48,22 @@ function add(a, b){
 ----function expresion 
 const add = function(a, b) {
     return a + b;
-}
+}*/
 
----- high-order functions 
------- functions as arguments
+// ---- high-order functions 
+// ------ functions as arguments
 function higherOrder(fun){
     fun();
 }
 
------- functions as return a returned value
+// ------ functions as return a returned value
 function higherOrder(){
     retur function (){
         return 'Hello';
     }
 }
 
------- functions can be nested to create a clouse that encapsulate data and logic from the rest of the program
+// ------ functions can be nested to create a clouse that encapsulate data and logic from the rest of the program
 function giveMeClosure() {
     let a = 10;
     return function(){
@@ -69,14 +72,14 @@ function giveMeClosure() {
     }
 }
 
--------- CALL STACK Memory vs Heap Memory
-Normally when you call a function that a variable with a primitive value it is stored on a CALL STACK Memory which is the browser shorter memory
-example: 
+// -------- CALL STACK Memory vs Heap Memory
+// Normally when you call a function that a variable with a primitive value it is stored on a CALL STACK Memory which is the browser shorter memory
+// example: 
 function giveMeClosure(){
     let a = 10;
 }
 
-however when you do a closure the inner function can still access variables in the outter function even after the initial function call. That happens because JS automatically store the data in the outter function in the HEAP Memory which will persist between function calls. 
+// however when you do a closure the inner function can still access variables in the outter function even after the initial function call. That happens because JS automatically store the data in the outter function in the HEAP Memory which will persist between function calls. 
 example:
 function giveMeClosure() {
     let a = 10;
@@ -86,13 +89,13 @@ function giveMeClosure() {
     }
 }
 
--- this and bind method.
-it is a key word that references an object bases on how a function is called. When called from the global scope it references the windows object in the browser. example: 
+// -- this and bind method.
+// it is a key word that references an object bases on how a function is called. When called from the global scope it references the windows object in the browser. example: 
 function wtfIsThis(){
     console.log(this);
 }   
-However if that same function is attached to an object and called by that object, this will be a reference to that object and you can manually bind function to other objects using the bind method
-example: 
+// However if that same function is attached to an object and called by that object, this will be a reference to that object and you can manually bind function to other objects using the bind method
+// example: 
 
 
 const person = {
@@ -104,26 +107,26 @@ const person = {
 const personFun = wtfIsThis.bind(person)
 
 
--- arrow functions
-arrow functions do not have their own this value and they are always anonymous which makes them ideal for function expressions
+// -- arrow functions
+// arrow functions do not have their own this value and they are always anonymous which makes them ideal for function expressions
 
--- passing values to functions
-when passing an primitive arguments to a function, they are passed by value which means its copy is created of the original variable.
-When passing object on the other side, it is stored in the heap and it is passed by reference, that means multiple parts of the code might be mutating the same object. 
+// -- passing values to functions
+// when passing an primitive arguments to a function, they are passed by value which means its copy is created of the original variable.
+// When passing object on the other side, it is stored in the heap and it is passed by reference, that means multiple parts of the code might be mutating the same object. 
 
 
--- Objects
-ways to define objects:
---- with the object little syntax
+// -- Objects
+// ways to define objects:
+// --- with the object little syntax
 const human = {
 
 }
-
+/*
 --- object constructor
 we can also create  object using the Objet constructor ans the new key word.
 const human = new Object();
 
----- obect characteristics
+// ---- obect characteristics
 An object contains a collection of key value pairs: properties and values
 Objects can inherit properties from each others thanks to a mechanism called the Prototype Chain. Every object has a private property that link to exactly one prototype. This differs from class-based inheritance found in many other languages because we are dealing with real objects that take out memory opposed to abstract classes in your code. 
 What is confusing is JS supports OOP with a class keyword. 
@@ -252,3 +255,4 @@ conbined nodejs with the browser to create full stack desktop apps with js
 
 -- typescript  | ESLINT
 these do an static analysis to improve your code quality.
+*/

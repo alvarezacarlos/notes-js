@@ -56,3 +56,11 @@ import { MY_VALUE, add } from './file';
 
 add(MY_VALUE, 5);
 // => 15
+
+
+
+
+// --------------------
+/* 
+when passing arguments, a primitive variable is passed by value, which means a copy is created of the original variable. However if the argument is an Object, that means it is stored in the heap memory and it is passed by reference.
+*/
