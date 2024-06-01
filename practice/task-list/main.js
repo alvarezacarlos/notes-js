@@ -1,120 +1,248 @@
-let taskListArray = [];
+let mealsState = []
+let ordersState = []
+let ruta = 'login' 
 
-// generate Id
-function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36);
-}
+const renderItems = (items) => {
+    const mealsList = document.getElementById('meals-list');
 
-const handleClearInput = () => {
-  const taskName = document.getElementById("taskNameInput");
-  taskName.value = "";
-};
-
-const handleCompleteTask = (e) => {
-  let clickedIcon = e.target;
-  let clickedTask = clickedIcon.parentNode.parentNode;
-  const clickedTaskId = clickedTask.getAttribute("data-id");
-  const clickedTaskArrayItem = taskListArray.find(
-    (task) => task._id === clickedTaskId
-  );
-
-  if (clickedTaskArrayItem.open) {
-    clickedTaskArrayItem.open = false;
-
-    clickedIcon.classList.remove("bi-check-circle-fill");
-    clickedIcon.classList.add("bi-arrow-counterclockwise");
+    mealsList.removeChild(mealsList.firstElementChild)
     
-    let taskTitle = clickedTask.querySelector("p");
-    taskTitle.style.textDecoration = "line-through";
-  } else {
-    clickedTaskArrayItem.open = true;
-
-    clickedIcon.classList.remove("bi-arrow-counterclockwise");
-    clickedIcon.classList.add("bi-check-circle-fill");
-
-    let taskTitle = clickedTask.querySelector("p");
-    taskTitle.style.textDecoration = "none";
-  }
-};
-
-const handleDeleteTask = (e) => {
-  let clickedIcon = e.target;
-  let clickedTask = clickedIcon.parentNode.parentNode;
-  const clickedTaskId = clickedTask.getAttribute("data-id");
-  const clickedTaskIndex = taskListArray.findIndex(
-    (task) => task._id === clickedTaskId
-  );
-  taskListArray.splice(clickedTaskIndex, 1);
-
-  const taskListContainer = document.getElementById("taskListContainer");
-  taskListContainer.removeChild(clickedTask);
-  console.log(taskListArray);
-};
-
-function handleCreateTask() {
-  let taskName = document.getElementById("taskNameInput");
-
-  if (taskName.value.trim() === "") {
-    return;
-  }
-
-  let taskList = document.getElementById("taskListContainer");
-
-  // create new task container
-  let newTask = document.createElement("div");
-
-  // add new task description
-  let newTaskTitle = document.createElement("p");
-  newTaskTitle.innerHTML = taskName.value;
-  let taskId = generateId();
-  taskListArray.push({ _id: taskId, title: taskName.value, open: true });
-  newTask.appendChild(newTaskTitle);
-
-  // add new
-  newTask.classList.add("task");
-  newTask.setAttribute("data-id", taskId);
-
-  // add task Icons
-  let taskIconsContainer = document.createElement("div");
-  taskIconsContainer.classList.add("iconsContainer");
-
-  // add complete icon
-  let completeIcon = document.createElement("i");
-  completeIcon.classList.add(
-    "bi",
-    "bi-check-circle-fill",
-    "completeIcon",
-    "taskIcon"
-  );
-  completeIcon.addEventListener("click", handleCompleteTask);
-  taskIconsContainer.append(completeIcon);
-
-  // add delete icon
-  let deleteIcon = document.createElement("i");
-  deleteIcon.classList.add("bi", "bi-trash-fill", "deleteIcon", "taskIcon");
-  deleteIcon.addEventListener("click", handleDeleteTask);
-  taskIconsContainer.append(deleteIcon);
-
-  newTask.appendChild(taskIconsContainer);
-
-  taskList.appendChild(newTask);
-
-  // clear textinput
-  handleClearInput();
-  console.log(taskListArray);
+    items.forEach(item => mealsList.insertAdjacentElement('beforeend', item))
 }
 
-const handleKeyDown = (e) => {
-  if (e.key === "Enter") {
-    handleCreateTask();
-  }
-};
 
-const initApp = () => {
-  let taskName = document.getElementById("taskNameInput");
-  taskName.addEventListener("keydown", handleKeyDown);
-  const createButton = document.getElementById("createButton");
-  createButton.addEventListener("click", handleCreateTask);
-};
+const renderOrders = (items) => {
+    const ordersList= document.getElementById('orders-list');
 
-window.onload = initApp;
+    ordersList.innerHTML = ''
+    items.forEach(item => {
+       
+        ordersList.insertAdjacentElement('beforeend', item)
+
+    })
+}
+
+const parseFromString = (s) => {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(s, 'text/html')
+
+    return doc.body.firstChild
+}
+
+const createMealsLIItem = (item) => {
+    const elem = parseFromString(`<li data-id="${item._id}">${item.name}</li>`)
+    elem.addEventListener('click', () => {
+        const mealsList = document.getElementById('meals-list')
+        const items = Array.from(mealsList.children) 
+        for (const item of items){
+            item.classList.remove('selected')
+        }
+        elem.classList.add('selected')
+        const clickedMealId =  document.getElementById('clickedMealId')
+        clickedMealId.value = item._id
+    })
+    return elem
+}
+
+const createOrdersLIItem = (order) => {
+    
+    const meal = mealsState.find(meal => meal._id === order.meal_id)
+    
+    const  elem  = parseFromString(`<li data-id="${order._id}">${meal.name} - ${localStorage.getItem('user')}</li>`)
+
+    return elem
+}
+
+
+
+const createOrderObeject = () => {
+    const clickedMealIdHost = document.getElementById('clickedMealId')
+    const clickedMealId = clickedMealIdHost.value;
+    
+    if (!clickedMealId){          
+        alert('You need to select a Meal!')
+
+        const bttn = document.getElementById('submit')
+        bttn.setAttribute('disabled', false)
+
+        return
+    }
+    console.log(clickedMealId)
+    return order = { 
+        meal_id: clickedMealId,
+    }
+}
+
+const createOrder = () => {
+    fetch('https://serverless-alvarez-carlos.vercel.app/api/orders', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json', 
+            authorization: localStorage.getItem('token')
+        },
+        body: JSON.stringify(createOrderObeject()) 
+    })
+    .then( res => {
+        fetchOrders()
+    })
+}
+
+const initOrdersView = () => {
+    fetch('https://serverless-alvarez-carlos.vercel.app/api/meals')
+
+    .then(response => response.json())
+    
+    .then(data => {
+
+        mealsState = data;
+
+        const items = data.map(createMealsLIItem)
+       
+        renderItems(items)
+
+        fetchOrders()
+    })
+}
+
+const fetchOrders = () => {
+    fetch('https://serverless-alvarez-carlos.vercel.app/api/orders')
+    .then(response => response.json())
+    .then(orderData => {
+
+        ordersState = orderData
+
+        console.log(orderData)
+
+        const items = orderData.map(order => createOrdersLIItem(order))
+
+        renderOrders(items)
+        const bttn = document.getElementById('submit')
+        bttn.removeAttribute('disabled')
+
+    })
+
+}
+
+const initForm = () => {
+    const form = document.getElementById('order')
+
+    form.onsubmit = (e) => {
+        e.preventDefault()
+
+        const bttn = document.getElementById('submit')
+        bttn.setAttribute('disabled', true)
+
+        createOrder(createOrderObeject())
+    }
+
+}
+
+const createUser = () => {
+    fetch('https://serverless-alvarez-carlos.vercel.app/api/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({email: 'Carlos@gmail.com', password: '123456'})
+    })
+}
+
+const gatherUserInput = () => {
+    const loginForm = document.getElementById('login-form')
+    const email = loginForm.querySelector('#email')
+    const password = loginForm.querySelector('#password')
+
+    const user = {
+        email: email.value,
+        password: password.value
+    }
+
+    console.log(user)
+    return user;
+}
+
+const login = () => {
+    fetch('https://serverless-alvarez-carlos.vercel.app/api/auth/login', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify(gatherUserInput()) 
+    })
+        .then(res => res.json()) 
+        .then(res => {
+            // console.log(res)
+            localStorage.setItem('user', res.userName)
+            localStorage.setItem('token', res.token) 
+            ruta =  'orders'
+            rendirect()
+        })
+}
+
+const initLogInFormView = () => {
+    const logInForm = document.getElementById('login-form')
+    logInForm.onsubmit = e => {
+        e.preventDefault()
+        login()
+    }
+}
+
+
+const renderLogInForm = () => {
+    const src = document.getElementById('login-temp')
+    const host = document.getElementById('app')
+    const srcNode = document.importNode(src.content, true)
+    const elem = srcNode.firstElementChild
+    host.removeChild(host.firstElementChild)
+    host.insertAdjacentElement('beforeend', elem)
+}
+
+const renderOrdersView = () => {
+    const src = document.getElementById('order-temp')
+    const host = document.getElementById('app')
+    const srcNode = document.importNode(src.content, true)
+    const elem = srcNode.firstElementChild
+    host.removeChild(host.firstElementChild)
+    host.insertAdjacentElement('beforeend', elem)
+}
+
+const rendirect = () => {
+    if (ruta === 'login'){
+        renderLogInForm()
+        initLogInFormView()
+    }
+    else if (ruta === 'orders'){
+        
+        renderOrdersView()
+        initOrdersView()
+        initForm()
+    }
+}
+
+
+const checkForToken = () => {
+    const token = localStorage.getItem('token')
+    if (token){
+        return true;
+    }
+    else {
+        return false
+    }
+}
+
+
+
+window.onload = () => {
+
+    const userAuthenticated = checkForToken()
+
+    if (userAuthenticated) {
+        renderOrdersView()
+        initOrdersView()
+        initForm()
+    }
+    else{
+        rendirect()
+    }   
+
+}
